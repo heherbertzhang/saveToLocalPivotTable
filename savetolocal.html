@@ -17,8 +17,6 @@
         <!-- optional: mobile support with jqueryui-touch-punch -->
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
         
-        <!-- for examples only! script to show code to user -->
-        <script type="text/javascript" src="show_code.js"></script>
     </head>
     <body>
         <script type="text/javascript">
@@ -29,10 +27,27 @@
     // To see this in action:
     // 1. configure the pivot table however you like then hit 'save'
     // 2. reload the page then hit 'restore' to see your saved configuration
+    function localConfig(data){
+        var config_file ;
+        try{
+            config_file = localStorage.getItem('pivotConfig');
+        }
+        catch(err){
+            config_file = $.cookie("pivotConfig");
+            if (config_file == null){
+                return;
+            }
+        }
+        $("#output2").pivotUI(data, JSON.parse(config_file), true);
+    }
+
 
     $(function(){
         $.getJSON("mps.json", function(mps) {
+            var tpl = $.pivotUtilities.aggregatorTemplates; 
             $("#output2").pivotUI(mps);
+            localConfig(mps);
+
 
             $("#save").on("click", function(){
                 var config = $("#output2").data("pivotUIOptions");
@@ -40,11 +55,19 @@
                 //delete some values which will not serialize to JSON
                 delete config_copy["aggregators"];
                 delete config_copy["renderers"];
-                $.cookie("pivotConfig", JSON.stringify(config_copy));
+                try{
+                    //first we need to store that into the local storage
+                    localStorage.setItem('pivotConfig', JSON.stringify(config_copy));
+                }
+                catch(err){
+                    //if the local storage is not supported, then we choose to use cookie 
+                    console.log (err);
+                }
+                $.cookie("pivotConfig", JSON.stringify(config_copy), {expires: 365});
             });
 
-            $("#restore").on("click", function(){
-                $("#output2").pivotUI(mps, JSON.parse($.cookie("pivotConfig")), true);
+            $("#restore").on("click" , function(){
+                localConfig(mps);
             });
 
         });
