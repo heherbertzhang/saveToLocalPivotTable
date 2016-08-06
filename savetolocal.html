@@ -13,10 +13,10 @@
         <style>
             body {font-family: Verdana;}
         </style>
-        
+
         <!-- optional: mobile support with jqueryui-touch-punch -->
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
-        
+
     </head>
     <body>
         <script type="text/javascript">
@@ -40,11 +40,15 @@
         }
         $("#output2").pivotUI(data, JSON.parse(config_file), true);
     }
-
+    function removeConfig(){
+      localStorage.removeItem("pivotConfig");
+      // remove from cookie
+      $.removeCookie("pivotConfig");
+    }
 
     $(function(){
         $.getJSON("mps.json", function(mps) {
-            var tpl = $.pivotUtilities.aggregatorTemplates; 
+            var tpl = $.pivotUtilities.aggregatorTemplates;
             $("#output2").pivotUI(mps);
             localConfig(mps);
 
@@ -60,7 +64,7 @@
                     localStorage.setItem('pivotConfig', JSON.stringify(config_copy));
                 }
                 catch(err){
-                    //if the local storage is not supported, then we choose to use cookie 
+                    //if the local storage is not supported, then we choose to use cookie
                     console.log (err);
                 }
                 $.cookie("pivotConfig", JSON.stringify(config_copy), {expires: 365});
@@ -69,7 +73,10 @@
             $("#restore").on("click" , function(){
                 localConfig(mps);
             });
-
+            $("#reset").on("click", function(){
+                removeConfig();
+                localConfig(mps);
+            });
         });
      });
         </script>
@@ -78,6 +85,7 @@
         <div id="output" style="margin: 30px;">
             <input type="button" value="Save Config to Local" id="save" style="font-size: 24px;" />
             <input type="button" value="Restore Config from Local" id="restore" style="font-size: 24px;" />
+            <input type="button" value="Reset Config" id="reset" style="font-size: 24px;" />
             <br /><br /><br />
             <div id="output2"></div>
         </div>
