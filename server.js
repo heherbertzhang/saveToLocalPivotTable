@@ -21,6 +21,7 @@ function onRequest(req, res){
 			if(temp != null){
 				name = temp[0].match(/\/.+$/);
 				name = name[0].substring(1);
+
 			}
 			res.writeHead(200, jsonHeader);
 			res.end(getProfileByUserName(name));
@@ -33,18 +34,11 @@ function onRequest(req, res){
 function getProfileByUserName(name){
 	// read the json data file. The file path for example can be ./linda.json
 	// which stores info for Linda
+	console.log(name);
 	var readFile;
-	fs.readFile('./'+ name+ '.json', function(err, data){
-		if(err){
-			readFile = 'error reading json file: ' + JSON.stringify(err, null, 4);
-		}
-		else{
-			readFile = data;
-		}
-		return;
-	});
+	readFile = fs.readFileSync('./'+ name + '.json');
 	return readFile;
 }
 
-
+console.log("starting");
 var server = http.createServer(onRequest).listen(3000);
