@@ -47,7 +47,7 @@
     }
 
     $(function(){
-        $.getJSON("mps.json", function(mps) {
+        $.getJSON("http://localhost:3000/users/mps", function(mps) {
             var tpl = $.pivotUtilities.aggregatorTemplates;
             $("#output2").pivotUI(mps);
             localConfig(mps);

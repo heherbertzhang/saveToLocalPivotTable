@@ -3,7 +3,7 @@
 var http = require('http');
 var fs = require('fs');
 
-var jsonHeader = 'Content-Type: application/json';
+var jsonHeader = 'Access-Control-Allow-Origin';
 var htmlHeader = 'Content-Type: text/html';
 
 //use these regex pattern to analysize the http request
@@ -23,7 +23,7 @@ function onRequest(req, res){
 				name = name[0].substring(1);
 
 			}
-			res.writeHead(200, jsonHeader);
+			res.writeHead(200, {'Access-Control-Allow-Origin':'*'});
 			res.end(getProfileByUserName(name));
 		}
 	}
